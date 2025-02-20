@@ -35,8 +35,26 @@
                 <a class="nav-link " id="profile-tab" data-toggle="pill" href="#profile" role="tab">Profile</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link logout-link">Logout</a>
+                <a href="{{ route('logout') }}" class="nav-link logout-link" onclick="return confirmLogout(event)">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
             </li>
+            <li class="nav-item">
+                <a href="{{ route('app.cashew_Layout') }}" class="nav-link logout-link">
+                    Back to<i class="fas fa-home-alt"></i>
+                </a>
+            </li>
+            <script>
+            function confirmLogout(event) {
+                // Show a confirmation alert
+                if (confirm("Are you sure you want to log out?")) {
+                    return true; // Proceed with the logout
+                } else {
+                    event.preventDefault(); // Cancel the logout
+                    return false;
+                }
+            }
+            </script>
         </ul>
         <div class="tab-content" id="accountTabContent">
             <!-- Orders Tab -->
@@ -218,7 +236,7 @@
                     </style>
                 </div>
 
-               
+
             </div>
             <!-- Profile Tab -->
             <div class="tab-pane fade " id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -228,8 +246,8 @@
 
                     <div class="form-group">
                         <label for="name" style="color:black;">Full Name</label>
-                        <input type="text" value="{{ Auth::user()->name }}" class="form-control" id="name"
-                            name="Name" value="{{  $customer->Name }}" required>
+                        <input type="text" value="{{ Auth::user()->name }}" class="form-control" id="name" name="Name"
+                            value="{{  $customer->Name }}" required>
                         @error('Name')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -248,14 +266,7 @@
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="col">
-                                <label for="email" style="color:black;">Email Address</label>
-                                <input type="email" class="form-control" id="email" name="Email"
-                                    value="{{  $customer->Email }}">
-                                @error('Email')
-                                <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
+
                         </div>
                     </div>
 

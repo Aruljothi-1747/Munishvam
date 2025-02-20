@@ -8,15 +8,22 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PincodeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OTPController;
 
+Route::get('/otp-login', function () {
+    return view('otp_login.otp_login');
+})->name('otp.login');
+
+Route::post('/send-otp', [OTPController::class, 'sendOTP'])->name('otp.send');
+Route::get('/otp/verify', [OTPController::class, 'showVerifyForm'])->name('otp.verify.form');
+Route::post('/otp/verify', [OTPController::class, 'verifyOTP'])->name('otp.verify');
+    
 
 // Login
-Route::get('UserLogin', [UserController::class, 'Login'])->name('user.login');
-Route::post('UserLogin', [UserController::class, 'LoginPage']);
-//Logout:
-Route::get('logout', [UserController::class, 'logout'])->name('logout');
 Route::get('UserCreate', [UserController::class, 'usercreate'])->name('user.usercreate');
 Route::post('UserStore', [UserController::class, 'store'])->name('user.store');
+//Logout:
+Route::get('logout', [UserController::class, 'logout'])->name('logout');
 
 Route::middleware('auth.user')->group(function () {
 
@@ -36,7 +43,7 @@ Route::post('ProductStore', [ProductController::class, 'store'])->name('product.
 Route::get('ProductEdit/{id}', [ProductController::class, 'edit'])->name('product.edit');
 Route::match(['post', 'put'], 'ProductUpdate/{id}', [ProductController::class, 'update'])->name('product.update');
 Route::get('ProductShow/{id}', [ProductController::class, 'show'])->name('product.show');
-Route::delete('ProductDestroy/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
+Route::delete('/product/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
 
 //orders
 Route::get('/orders', [OrderDetailsController::class, 'OrderIndex'])->name('OrderDetails.OrderIndex');

@@ -61,21 +61,29 @@
                 @else
                 <p>Guest</p>
                 @endauth
-                <a href="order-details.html" class="dropdown-item" style="padding: 10px;">
+                @auth
+                <a href="{{ route('App.AccountDetails', ['id' => Auth::user()->id]) }}" class="dropdown-item"
+                    style="padding: 10px;">
                     <i class="fas fa-shopping-cart"></i> Order Details
                 </a>
+                @else
+                <a href="{{ route('otp.login') }}" class="dropdown-item" style="padding:10px;">
+                    <i class="fas fa-user"></i> Order Details
+                </a>
+                @endauth
+
                 @auth
                 <a href="{{ route('App.AccountDetails', ['id' => Auth::user()->id]) }}" class="dropdown-item"
                     style="padding:10px;">
                     <i class="fas fa-user"></i> My Account
                 </a>
                 @else
-                <a href="{{ route('user.login') }}" class="dropdown-item" style="padding:10px;">
+                <a href="{{ route('otp.login') }}" class="dropdown-item" style="padding:10px;">
                     <i class="fas fa-user"></i> My Account
                 </a>
                 @endauth
                 @auth
-                <a href="{{ route('logout') }}" class="my-auto text-decoration-none"
+                <a href="{{ route('logout') }}" class="dropdown-item" style="padding:10px;"
                     onclick="return confirmLogout(event)">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
@@ -92,9 +100,10 @@
                 }
                 </script>
                 @else
-                <a href="{{ route('user.login') }}" style="padding:10px;" class="my-auto">
+                <a href="{{ route('otp.login') }}" style="padding:10px;" class="dropdown-item">
                     <i class="fas fa-sign-in-alt"></i> Login
                 </a>
+
                 @endauth
 
             </div>

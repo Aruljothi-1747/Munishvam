@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Middleware;
-
 use Closure;
 use Illuminate\Support\Facades\Auth; // Import Auth facade here
 use Illuminate\Http\Request;
@@ -14,6 +13,6 @@ class CheckUserRole
             return $next($request);
         }
 
-        return redirect()->route('user.login'); // Redirect to login if role doesn’t match
+        return redirect()->route('app.cashew_Layout'); // Ensure correct route name
     }
 }

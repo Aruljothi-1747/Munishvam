@@ -290,27 +290,25 @@
                 <div class="section text-center">
                     <form action="{{ route('placeOrder') }}" method="POST">
                         @csrf
-                        <div>
-                            <input type="hidden" name="order_date" value=" {{ now()->format('d-M-Y') }}">
-                            <input type="hidden" name="Name" value=" {{ $customer->Name ?? 'Not Available' }}">
-                            <input type="hidden" name="Phonenumber"
-                                value="{{ $customer->Phonenumber ?? 'Not Available' }}">
-                            <input type="hidden" name="landmark" value="{{ $addressParts[0] ?? '' }}">
-                            <input type="hidden" name="Phonenumber" value="{{ $customer->Phonenumber ?? '' }}">
-                            <input type="hidden" name="DoorNo" value="{{ $addressParts[1] ?? '' }}">
-                            <input type="hidden" name="Street" value="{{ $addressParts[2] ?? '' }}">
-                            <input type="hidden" name="Village_Town" value="{{ $addressParts[3] ?? '' }}">
-                            <input type="hidden" name="Post" value="{{ $addressParts[4] ?? '' }}">
-                            <input type="hidden" name="Taluka" value="{{ $addressParts[5] ?? '' }}">
-                            <input type="hidden" name="District" value="{{ $customer->District ?? '' }}">
-                            <input type="hidden" name="Pincode" value="{{ $customer->Pincode ?? '' }}">
-                        </div>
+                        <input type="hidden" name="order_date" value="{{ now()->format('Y-m-d') }}">
+                        <input type="hidden" name="Name" value="{{ $customer->Name ?? 'Not Available' }}">
+                        <input type="hidden" name="Phonenumber" value="{{ $customer->Phonenumber ?? '' }}">
+                        <input type="hidden" name="landmark" value="{{ $addressParts[0] ?? '' }}">
+                        <input type="hidden" name="DoorNo" value="{{ $addressParts[1] ?? '' }}">
+                        <input type="hidden" name="Street" value="{{ $addressParts[2] ?? '' }}">
+                        <input type="hidden" name="Village_Town" value="{{ $addressParts[3] ?? '' }}">
+                        <input type="hidden" name="Post" value="{{ $addressParts[4] ?? '' }}">
+                        <input type="hidden" name="Taluka" value="{{ $addressParts[5] ?? '' }}">
+                        <input type="hidden" name="District" value="{{ $customer->District ?? '' }}">
+                        <input type="hidden" name="Pincode" value="{{ $customer->Pincode ?? '' }}">
 
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                         <input type="hidden" name="quantity" value="{{ $product->Quantity ?? 1 }}">
-                        <button type="submit" class="order-btn"> Proceed to Order</button>
+
+                        <button type="submit" class="order-btn">Proceed to Order</button>
                     </form>
                 </div>
+
             </div>
         </div>
     </div>
@@ -365,9 +363,6 @@
                                     <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <input type="hidden" class="form-control" id="email" name="Email"
-                                    value="{{  $customer->Email }}">
-
                             </div>
                         </div>
 

@@ -12,12 +12,12 @@ class AuthenticateUser
     {
         // Check if the user is authenticated
         if (!Auth::check()) {
-          return redirect()->route('user.login')->with('error', 'Please login first.');
+          return redirect()->route('otp_login.otp_login')->with('error', 'Please login first.');
         }
 
         // Optionally, check if the user has the required role
         if ($role && Auth::user()->role !== $role) {
-            return redirect()->route('user.login')->with('error', 'You do not have permission to access this page.');
+            return redirect()->route('otp_login.otp_login')->with('error', 'You do not have permission to access this page.');
         }
 
 

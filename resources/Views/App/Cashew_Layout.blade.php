@@ -84,29 +84,22 @@ Product List
                             data-bs-toggle="modal" data-bs-target="#productModal{{ $item->id }}">
                             <i class="fa fa-shopping-bag me-2 text-primary"></i>Details
                         </a>
-                        <!-- <a href="javascript:void(0);"
-                            class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart"
+                        @if($cartItems->where('product_id', $item->id)->count() > 0)
+                        <!-- If product already added to the cart -->
+                        <a href="javascript:void(0);"
+                            class="btn border border-secondary rounded-pill px-2 text-success disabled">
+                            <i class="fa fa-check me-2 text-success"></i>Added to Cart
+                        </a>
+                        @else
+                        <!-- If product not added to the cart -->
+                        <a href="javascript:void(0);"
+                            class="btn border border-secondary rounded-pill px-2 text-primary add-to-cart"
                             data-id="{{ $item->id }}" data-name="{{ $item->ProductName }}"
                             data-price="{{ $item->ProductPrice }}"
                             data-image="{{ asset('ProductLogos/' . ($item->ProductLogo ?? 'image.png')) }}">
-                            <i class="fa fa-shopping-cart me-2 text-primary"></i>Add to Cart
-                        </a> -->
-                        @if($cartItems->where('product_id', $item->id)->count() > 0)
-    <!-- If product already added to the cart -->
-    <a href="javascript:void(0);"
-        class="btn border border-secondary rounded-pill px-2 text-success disabled">
-        <i class="fa fa-check me-2 text-success"></i>Added to Cart
-    </a> 
-@else
-    <!-- If product not added to the cart -->
-    <a href="javascript:void(0);"
-        class="btn border border-secondary rounded-pill px-2 text-primary add-to-cart"
-        data-id="{{ $item->id }}" data-name="{{ $item->ProductName }}"
-        data-price="{{ $item->ProductPrice }}"
-        data-image="{{ asset('ProductLogos/' . ($item->ProductLogo ?? 'image.png')) }}">
-        <i class="fa fa-shopping-cart me-2 text-primary"></i> Add to Cart
-    </a>
-@endif
+                            <i class="fa fa-shopping-cart me-2 text-primary"></i> Add to Cart
+                        </a>
+                        @endif
 
 
 
@@ -156,31 +149,36 @@ Product List
                             <div class="row">
                                 <!-- Left Column: Product Image (Responsive) -->
                                 <div class="col-md-5 col-sm-12 mb-3">
-                                    <!-- Main Product Image -->
-                                    @if($item->ProductLogo)
-                                    <img id="main-product-image" src="{{ asset('ProductLogos/' . $item->ProductLogo) }}"
-                                        class="img-fluid rounded shadow-sm w-100" alt="{{ $item->ProductName }}">
-                                    @else
-                                    <img id="main-product-image" src="{{ asset('ProductLogos/image.png') }}"
-                                        class="img-fluid rounded shadow-sm w-100" alt="Default Image">
-                                    @endif
-
-                                    <!-- Thumbnails for additional images -->
-                                    <div class="d-flex mt-2">
-                                        @if($item->ProductImages && count($item->ProductImages) > 0)
-                                        @foreach($item->ProductImages as $image)
-                                        <img src="{{ asset('ProductLogos/' . $image) }}"
-                                            class="img-thumbnail me-2 cursor-pointer" alt="Additional Image"
-                                            style="max-width: 80px;"
-                                            onclick="changeMainImage('{{ asset('ProductLogos/' . $image) }}')">
-                                        @endforeach
-                                        @else
-                                        <img src="{{ asset('ProductLogos/default.jpg') }}"
-                                            class="img-thumbnail me-2 cursor-pointer" alt="Default Image"
-                                            style="max-width: 80px;">
-                                        @endif
+                                    <div class="ecommerce-gallery" data-mdb-ecommerce-gallery-init
+                                        data-mdb-zoom-effect="true" data-mdb-auto-height="true">
+                                        <div class="row py-3 shadow-5">
+                                            <img id="main-product-image-{{ $item->id }}"
+                                                src="{{ asset('ProductLogos/' . ($item->ProductLogo ?? 'placeholder.jpg')) }}"
+                                                class="img-fluid rounded shadow-sm w-100"
+                                                alt="{{ $item->ProductName }}">
+                                            @foreach (['ProductLogo', 'ProductLogo2', 'ProductLogo3', 'ProductLogo4',
+                                            'ProductLogo5'] as $field)
+                                            @if (!empty($item->{$field}))
+                                            <div class="col-3 p-1">
+                                                <img src="{{ asset('ProductLogos/' . $item->{$field}) }}"
+                                                    onclick="changeMainImage('{{ $item->id }}', this)"
+                                                    class="thumbnail-img w-100"
+                                                    alt="{{ $item->ProductName }} Thumbnail">
+                                            </div>
+                                            @endif
+                                            @endforeach
+                                        </div>
                                     </div>
                                 </div>
+
+                                <script>
+                                function changeMainImage(productId, thumbnail) {
+                                    const mainImage = document.getElementById(`main-product-image-${productId}`);
+                                    mainImage.src = thumbnail.src;
+                                    mainImage.alt = thumbnail.alt;
+                                }
+                                </script>
+
 
                                 <!-- Right Column: Product Details (Responsive) -->
                                 <div class="col-md-7 col-sm-12">
@@ -200,7 +198,8 @@ Product List
                                     @endphp
                                     <h4 class="text-danger fw-bold mb-2">₹{{ number_format($discountedPrice, 2) }}/-
                                     </h4>
-                                    <span class="badge bg-success mb-3">Save {{ $item->discount_percentage }}%</span>
+                                    <span class="badge bg-success mb-3">Save
+                                        {{ $item->discount_percentage }}%</span>
 
                                     <!-- Price and Weight Section -->
                                     <div class="p-2 bg-light border rounded shadow-sm mb-3">
@@ -221,7 +220,8 @@ Product List
                                                 <p class="fs-6 text-dark fw-bold">{{ $item->Measurement }} kg</p>
                                             </div>
                                         </div>
-                                        <small class="text-muted"><i class="fas fa-info-circle me-1"></i> Price based on
+                                        <small class="text-muted"><i class="fas fa-info-circle me-1"></i> Price
+                                            based on
                                             1 kg unit.</small>
                                     </div>
 
@@ -242,8 +242,6 @@ Product List
                                             data-image="{{ asset('ProductLogos/' . ($item->ProductLogo ?? 'image.png')) }}">
                                             <i class="fa fa-shopping-cart me-2 text-primary"></i>Add to Cart
                                         </a>
-
-
                                     </div>
 
                                 </div>
@@ -252,7 +250,6 @@ Product List
                     </div>
                 </div>
             </div>
-
             @endforeach
         </div>
 
@@ -387,33 +384,42 @@ document.querySelectorAll(".add-to-cart").forEach((button) => {
 
         // Disable the Add to Cart button and change its text
         this.classList.add("disabled");
-        this.innerHTML = '<i class="fa fa-check me-2 text-success"></i>Added to Cart';
+        this.innerHTML = '<i class="fa fa-check me-2 text-success"></i> Added to Cart';
 
         // Send the data to the backend
         fetch("/cart/add", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({
-                productId: productId,
-                name: productName,
-                price: productPrice,
-                image: productImage, // Only send the filename here
-                quantity: 1 // Default quantity
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    productId: productId,
+                    name: productName,
+                    price: productPrice,
+                    image: productImage, // Only send the filename here
+                    quantity: 1 // Default quantity
+                })
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                fetchCartDetails();
-                openCartSidebar(); // Open the cart sidebar
-            } else {
-                alert("Error adding product to cart.");
-            }
-        })
-        .catch(error => console.error("Error:", error));
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    fetchCartDetails();
+                    openCartSidebar(); // Open the cart sidebar
+                } else {
+                    alert("Error adding product to cart.");
+                    // Re-enable button on error
+                    this.classList.remove("disabled");
+                    this.innerHTML =
+                        '<i class="fa fa-shopping-cart me-2 text-primary"></i> Add to Cart';
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                this.classList.remove("disabled");
+                this.innerHTML =
+                '<i class="fa fa-shopping-cart me-2 text-primary"></i> Add to Cart';
+            });
     });
 });
 
@@ -424,130 +430,6 @@ function openCartSidebar() {
     cartSidebar.style.transform = 'translateX(0)';
     cartBackdrop.style.display = 'block';
 }
-
-// Function to fetch and display cart details
-function fetchCartDetails() {
-    const cartItems = document.getElementById("cart-items");
-    const cartTotal = document.getElementById("cart-total");
-
-    // Clear the current cart items before fetching new data
-    cartItems.innerHTML = '';
-
-    // Fetch updated cart details
-    fetch('/get-cart-details')
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.cartItems.length > 0) {
-                data.cartItems.forEach(item => {
-                    const productRow = document.createElement("div");
-                    productRow.className = `d-flex justify-content-between align-items-center mb-3 product-row product-${item.product_id}`;
-                    productRow.innerHTML = `
-                        <div class="product-info d-flex align-items-center">
-                            <img src="${item.product_image}" alt="${item.product_name}" class="cart-product-image me-2" style="width: 50px; height: 50px; object-fit: cover;">
-                            <div>
-                                <h6 class="mb-0">${item.product_name}</h6>
-                                <small class="product-price text-muted" data-price="${item.product_price}">₹${parseFloat(item.product_price).toFixed(2)}</small>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <button class="btn btn-outline-secondary btn-sm quantity-decrease">-</button>
-                            <input type="text" value="${item.quantity}" class="form-control text-center mx-2 product-quantity" style="width: 50px;" readonly>
-                            <button class="btn btn-outline-secondary btn-sm quantity-increase">+</button>
-                        </div>
-                        <button class="btn btn-danger btn-sm remove-item" data-id="${item.product_id}">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    `;
-                    cartItems.appendChild(productRow);
-
-                    // Add event listeners for remove buttons after appending rows
-                    addProductRowListeners(productRow);
-                });
-                updateTotal();
-            } else {
-                cartItems.innerHTML = '<p class="empty-cart-message text-center text-muted">Your cart is empty.</p>';
-            }
-        })
-        .catch(error => console.error('Error fetching cart details:', error));
-}
-
-// Function to add event listeners for quantity change and item removal
-function addProductRowListeners(row) {
-    row.querySelector(".quantity-increase").addEventListener("click", function() {
-        // Handle quantity increase
-        const quantityInput = row.querySelector(".product-quantity");
-        quantityInput.value = parseInt(quantityInput.value) + 1;
-        updateTotal();
-    });
-
-    row.querySelector(".quantity-decrease").addEventListener("click", function() {
-        // Handle quantity decrease
-        const quantityInput = row.querySelector(".product-quantity");
-        if (parseInt(quantityInput.value) > 1) {
-            quantityInput.value = parseInt(quantityInput.value) - 1;
-            updateTotal();
-        }
-    });
-
-    row.querySelector(".remove-item").addEventListener("click", function() {
-    const productId = row.querySelector(".remove-item").dataset.id;
-
-    // Change button style to indicate the item is being removed
-    const removeButton = row.querySelector(".remove-item");
-    removeButton.disabled = true; // Disable the button
-    removeButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Removing...'; // Add a spinner or text
-
-    // Send the DELETE request to remove the item from the cart
-    fetch(`/cart/remove/${productId}`, {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // If successful, remove the item from the cart in the UI
-            row.remove();
-            updateTotal(); // Update the total after removing the item
-
-            // Now update the "Add to Cart" button
-            updateAddToCartButton(productId, true); // Enable button after removal
-        } else {
-            alert("Error removing item from cart.");
-        }
-    })
-    .catch(error => {
-        console.error("Error:", error);
-        // In case of an error, restore the button
-        removeButton.disabled = false;
-        removeButton.innerHTML = '<i class="fas fa-trash-alt"></i> Remove';
-    });
-});
-
-// Function to update the "Add to Cart" button (whether item is in cart or not)
-
-}
-
-
-
-// Function to update the total amount in the cart
-function updateTotal() {
-    let total = 0;
-    const cartItems = document.getElementById("cart-items");
-    const cartRows = cartItems.querySelectorAll(".product-row");
-
-    cartRows.forEach((row) => {
-        const price = parseFloat(row.querySelector(".product-price").dataset.price);
-        const quantity = parseInt(row.querySelector(".product-quantity").value);
-        total += price * quantity;
-    });
-
-    const cartTotal = document.getElementById("cart-total");
-    cartTotal.textContent = `₹${total.toFixed(2)}`;
-}
-
 
 // Function to fetch and display cart details
 function fetchCartDetails() {
@@ -588,36 +470,9 @@ function fetchCartDetails() {
 
                     // Add the product row to the cart items
                     cartItems.appendChild(productRow);
-                });
 
-                // Add event listeners for remove buttons after appending rows
-                document.querySelectorAll(".remove-item").forEach((button) => {
-                    button.addEventListener("click", function() {
-                        const productId = this.dataset.id;
-
-                        // Send the DELETE request to remove the item from the cart
-                        fetch(`/cart/remove/${productId}`, {
-                                method: "DELETE",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    "X-CSRF-TOKEN": document.querySelector(
-                                        'meta[name="csrf-token"]').content
-                                }
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    // If successful, remove the item from the cart in the UI
-                                    const productRow = document.querySelector(
-                                        `.product-${productId}`);
-                                    productRow.remove();
-                                    updateTotal(); // Update the total after removing the item
-                                } else {
-                                    alert("Error removing item from cart.");
-                                }
-                            })
-                            .catch(error => console.error("Error:", error));
-                    });
+                    // ✅ Add listeners for quantity and remove button
+                    addProductRowListeners(productRow, item.product_id);
                 });
 
                 updateTotal(); // Update the total after loading the cart
@@ -628,8 +483,6 @@ function fetchCartDetails() {
         })
         .catch(error => console.error('Error fetching cart details:', error));
 }
-
-
 
 // Function to update the total amount in the cart
 function updateTotal() {
@@ -647,43 +500,73 @@ function updateTotal() {
     cartTotal.textContent = `₹${total.toFixed(2)}`;
 }
 
+// ✅ Function to update the "Add to Cart" button after item removal
+function updateAddToCartButton(productId) {
+    const addToCartButton = document.querySelector(`.add-to-cart[data-id="${productId}"]`);
+    if (addToCartButton) {
+        addToCartButton.classList.remove("disabled", "text-success");
+        addToCartButton.classList.add("text-primary");
+        addToCartButton.innerHTML = '<i class="fa fa-shopping-cart me-2 text-primary"></i> Add to Cart';
+    }
+}
+
 // Function to add event listeners for quantity change and item removal
-function addProductRowListeners(row) {
+function addProductRowListeners(row, productId) {
+    const quantityInput = row.querySelector(".product-quantity");
+
+    // Increase quantity
     row.querySelector(".quantity-increase").addEventListener("click", function() {
-        // Handle quantity increase
-        const quantityInput = row.querySelector(".product-quantity");
         quantityInput.value = parseInt(quantityInput.value) + 1;
         updateTotal();
     });
 
+    // Decrease quantity
     row.querySelector(".quantity-decrease").addEventListener("click", function() {
-        // Handle quantity decrease
-        const quantityInput = row.querySelector(".product-quantity");
         if (parseInt(quantityInput.value) > 1) {
             quantityInput.value = parseInt(quantityInput.value) - 1;
             updateTotal();
         }
     });
 
+    // ✅ Modify the remove button event listener
     row.querySelector(".remove-item").addEventListener("click", function() {
-        // Handle item removal
-        const productId = row.querySelector(".remove-item").dataset.id;
+        const removeButton = this;
+
+        // Change button style to indicate the item is being removed
+        removeButton.disabled = true;
+        removeButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Removing...';
+
+        // Send the DELETE request to remove the item from the cart
         fetch(`/cart/remove/${productId}`, {
-                method: "DELETE"
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                }
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    // ✅ Remove the item from the cart in the UI
                     row.remove();
                     updateTotal();
+
+                    // ✅ Enable the "Add to Cart" button after removal
+                    updateAddToCartButton(productId);
+                } else {
+                    alert("Error removing item from cart.");
+                    removeButton.disabled = false;
+                    removeButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
                 }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                removeButton.disabled = false;
+                removeButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
             });
     });
 }
-
 </script>
 
-
-<!-- Footer End -->
 
 @endsection

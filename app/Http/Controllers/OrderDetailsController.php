@@ -11,18 +11,24 @@ use Illuminate\Http\Request;
 class OrderDetailsController extends Controller
 {
 
-public function printOrder($id) 
-{
-    // Get the order details
-    $order = Order::with(['product', 'customer'])->findOrFail($id);
-   $addressParts = isset($order->Address) ? explode(', ', $order->Address) : [];
-      $productPrice = $order->product->ProductPrice;
-    $shippingCharge = 50; // Set your shipping charge here
-    $gstPercentage = 18; // GST as a percentage
-    $gstAmount = ($productPrice + $shippingCharge)* $gstPercentage / 100;
-    $totalAmount = $productPrice + $shippingCharge + $gstAmount;
-    return view('OrderDetails.print', compact('order','addressParts','gstPercentage','gstAmount','totalAmount'));
-}
+    public function printOrder($id) 
+    {
+        $order = Order::with(['product', 'customer'])->findOrFail($id);
+    
+        if (!$order->product) {
+            return redirect()->back()->with('error', 'Product not found for this order.');
+        }
+    
+        $addressParts = isset($order->Address) ? explode(', ', $order->Address) : [];
+        $productPrice = $order->product->ProductPrice ?? 0; // Default to 0 if null
+        $shippingCharge = 50; 
+        $gstPercentage = 18; 
+        $gstAmount = ($productPrice + $shippingCharge) * $gstPercentage / 100;
+        $totalAmount = $productPrice + $shippingCharge + $gstAmount;
+    
+        return view('OrderDetails.print', compact('order','addressParts','gstPercentage','gstAmount','totalAmount'));
+    }
+    
 
    public function OrderIndex()
 {
@@ -81,49 +87,61 @@ public function showOrderDetails($id)
 }
 
 
-   public function placeOrder(Request $request)
+public function placeOrder(Request $request)
 {
-   $request->validate([
-    'product_id' => 'required|exists:products,id',
-    'quantity' => 'required|integer|min:1',
-    'Name' => 'nullable|string|max:255', // Make Name optional, if it's already provided in the form
-    'Phonenumber' => 'nullable|string|regex:/^[0-9]{10}$/', // Make Phonenumber optional, if it's already provided
-    'landmark' => 'nullable|string|max:255',
-    'DoorNo' => 'nullable|string|max:50',
-    'Street' => 'nullable|string|max:255',
-    'Village_Town' => 'nullable|string|max:255',
-    'Post' => 'nullable|string|max:255',
-    'Taluka' => 'nullable|string|max:255',
-    'District' => 'nullable|string|max:255',
-    'Pincode' => 'nullable|string|regex:/^[0-9]{6}$/', // Make Pincode optional, if it's already provided
-]);
-$formattedDate = Carbon::now()->format('Y-m-d');
+    try {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+            'Name' => 'nullable|string|max:255',
+            'Phonenumber' => 'nullable|string|regex:/^[0-9]{10}$/',
+            'landmark' => 'nullable|string|max:255',
+            'DoorNo' => 'nullable|string|max:50',
+            'Street' => 'nullable|string|max:255',
+            'Village_Town' => 'nullable|string|max:255',
+            'Post' => 'nullable|string|max:255',
+            'Taluka' => 'nullable|string|max:255',
+            'District' => 'nullable|string|max:255',
+            'Pincode' => 'nullable|string|regex:/^[0-9]{6}$/',
+            'order_date' => 'required|date',
+        ]);
 
-    $product = Product::findOrFail($request->product_id);
-    $totalPrice = $product->ProductPrice * $request->quantity;
-    $customer = Auth::user();
-    $order = new Order();
-    $order->user_id = Auth::id();
-    $order->product_id = $product->id;
-    $order->quantity = $request->quantity;
-    $order->total_price = $totalPrice + 50 + ($totalPrice * 0.05); // Including GST and shipping
-    $order->status = 'Pending';
-    $order->order_date = $request->input('formattedDate');
-    $order->Address = 
-     $request->input('Name') . ', ' . 
-    $request->input('Phonenumber') . ', ' . 
-    $request->input('landmark') . ', ' . 
-    $request->input('DoorNo') . ', ' . 
-    $request->input('Street') . ', ' . 
-    $request->input('Village_Town') . ', ' . 
-    $request->input('Post') . ', ' . 
-    $request->input('Taluka') . ', ' . 
-    $request->input('District') . ', ' . 
-    $request->input('Pincode');
-    $order->save();
+        $product = Product::findOrFail($request->product_id);
+        $totalPrice = $product->ProductPrice * $request->quantity;
 
-    return redirect()->route('OrderDetails.confirmation')->with('success', 'Order placed successfully!');
+        $order = new Order();
+        $order->user_id = Auth::id();
+        $order->product_id = $product->id;
+        $order->quantity = $request->quantity;
+        $order->total_price = $totalPrice + 50 + ($totalPrice * 0.05);
+        $order->status = 'Pending';
+        $order->order_date = $request->order_date;
+
+        $order->Address = implode(', ', [
+            $request->input('Name', 'Not Available'),
+            $request->input('Phonenumber', 'Not Available'),
+            $request->input('landmark', ''),
+            $request->input('DoorNo', ''),
+            $request->input('Street', ''),
+            $request->input('Village_Town', ''),
+            $request->input('Post', ''),
+            $request->input('Taluka', ''),
+            $request->input('District', ''),
+            $request->input('Pincode', '')
+        ]);
+
+        $order->save();
+
+        return redirect()->route('OrderDetails.confirmation')->with('success', 'Order placed successfully!');
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return back()->withErrors(['error' => 'Product not found.']);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return back()->withErrors($e->validator->errors());
+    } catch (\Exception $e) {
+        return back()->withErrors(['error' => 'An unexpected error occurred: ' . $e->getMessage()]);
+    }
 }
+
 
 
 }

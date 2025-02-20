@@ -31,28 +31,6 @@ class Cashew_LayoutController extends Controller
 
                 return view('App.AccountDetails', compact('user', 'customer', 'addressParts','orders'));
             }
-
-
-        // Update the account details
-        public function update(Request $request)
-        {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
-                'phone' => 'nullable|string|max:15',
-                'address' => 'nullable|string|max:255',
-            ]);
-
-            $user = Auth::user();
-            $user->name = $request->input('name');
-            $user->email = $request->input('email');
-            $user->phone = $request->input('phone');
-            $user->address = $request->input('address');
-            $user->save();
-
-        return redirect()->route('App.AccountDetails')->with('success', 'Account details updated successfully.');
-    }
-
     // Store a new customer
    public function Customerstore(Request $request, $id)
 {
@@ -61,7 +39,6 @@ class Cashew_LayoutController extends Controller
     // Update validation rules to exclude the current user from the unique check
     $request->validate([
         'Name' => 'required|unique:customers,Name,' . $customer->id,
-        'Email' => 'required|email|unique:customers,Email,' . $customer->id,
         'Phonenumber' => 'required|numeric',
         'DoorNo' => 'required',
         'Street' => 'required',
@@ -92,7 +69,6 @@ class Cashew_LayoutController extends Controller
     // Update customer information
     $customer->Name = $request->input('Name');
     $customer->UserId = $request->input('UserId');
-    $customer->Email = $request->input('Email');
     $customer->Phonenumber = $request->input('Phonenumber');
     $customer->Pincode = $request->input('Pincode');
     $customer->District = $request->input('District');

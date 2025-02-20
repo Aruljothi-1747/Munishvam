@@ -7,7 +7,7 @@ Create Product
 @section('maincontent')
 <div class="container-fluid">
     <div class="row justify-content-start">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-header bg-default text-black">Add Product</div>
 
@@ -109,11 +109,108 @@ Create Product
                         </div>
 
                         <div class="form-group">
-                            <label for="ProductLogo">ProductLogo</label>
-                            <input type="file" class="form-control-file" id="ProductLogo" name="ProductLogo"
-                                onchange="previewImage()">
+                            <label for="ProductLogo">Product Logos</label>
+                            <div class="row">
+                                <!-- First Image Preview -->
+                                <div class="col">
+                                    <div class="mb-2 form-group-row">
+                                        <img id="selectedImage1" src="img/placeholder.jpg" alt="example placeholder"
+                                            style="width: 120px; border: 1px solid #ccc; border-radius: 5px;" />
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            style="position: absolute; top: -5px; right: 100px; border-radius: 50%;"
+                                            onclick="removeImage('selectedImage1', 'customFile1')">
+                                            &times;
+                                        </button>
+                                    </div>
+                                    <div class="mt-2">
+                                        <label class="btn btn-primary btn-sm" for="customFile1">Choose File</label>
+                                        <input type="file" class="form-control d-none" id="customFile1"
+                                            name="ProductLogo"
+                                            onchange="displaySelectedImage(event, 'selectedImage1')" />
+
+                                    </div>
+                                </div>
+
+                                <!-- Second Image Preview -->
+                                <div class="col">
+                                    <div class="mb-2 form-group-row">
+                                        <img id="selectedImage2" src="img/placeholder.jpg" alt="example placeholder"
+                                            style="width: 120px; border: 1px solid #ccc; border-radius: 5px;" />
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            style="position: absolute; top: -5px; right: 100px; border-radius: 50%;"
+                                            onclick="removeImage('selectedImage2', 'customFile2')">
+                                            &times;
+                                        </button>
+                                    </div>
+                                    <div class="mt-2">
+                                        <label class="btn btn-primary btn-sm" for="customFile2">Choose File</label>
+                                        <input type="file" class="form-control d-none" id="customFile2"
+                                            name="ProductLogo2"
+                                            onchange="displaySelectedImage(event, 'selectedImage2')" />
+                                    </div>
+
+                                </div>
+
+                                <!-- Third Image Preview -->
+                                <div class="col">
+                                    <div class="mb-2 form-group-row">
+                                        <img id="selectedImage3" src="img/placeholder.jpg" alt="example placeholder"
+                                            style="width: 120px; border: 1px solid #ccc; border-radius: 5px;" />
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            style="position: absolute; top: -5px; right: 100px; border-radius: 50%;"
+                                            onclick="removeImage('selectedImage3', 'customFile3')">
+                                            &times;
+                                        </button>
+                                    </div>
+                                    <div class="mt-2">
+                                        <label class="btn btn-primary btn-sm" for="customFile3">Choose File</label>
+                                        <input type="file" class="form-control d-none" id="customFile3"
+                                            name="ProductLogo3"
+                                            onchange="displaySelectedImage(event, 'selectedImage3')" />
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="mb-2 form-group-row">
+                                        <img id="selectedImage4" src="img/placeholder.jpg" alt="example placeholder"
+                                            style="width: 120px; border: 1px solid #ccc; border-radius: 5px;" />
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            style="position: absolute; top: -5px; right: 100px; border-radius: 50%;"
+                                            onclick="removeImage('selectedImage4', 'customFile4')">
+                                            &times;
+                                        </button>
+                                    </div>
+                                    <div class="mt-2">
+                                        <label class="btn btn-primary btn-sm" for="customFile4">Choose File</label>
+                                        <input type="file" class="form-control d-none" id="customFile4"
+                                            name="ProductLogo4"
+                                            onchange="displaySelectedImage(event, 'selectedImage4')" />
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="mb-2 form-group-row">
+                                        <img id="selectedImage5" src="img/placeholder.jpg" alt="example placeholder"
+                                            style="width: 120px; border: 1px solid #ccc; border-radius: 5px;" />
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            style="position: absolute; top: -5px; right: 100px; border-radius: 50%;"
+                                            onclick="removeImage('selectedImage5', 'customFile5')">
+                                            &times;
+                                        </button>
+                                    </div>
+                                    <div class="mt-2">
+                                        <label class="btn btn-primary btn-sm" for="customFile5">Choose File</label>
+                                        <input type="file" class="form-control d-none" id="customFile5"
+                                            name="ProductLogo5"
+                                            onchange="displaySelectedImage(event, 'selectedImage5')" />
+                                    </div>
+                                </div>
+
+                                <!-- Additional images can be added similarly -->
+                            </div>
                         </div>
-                        <div id="imagePreview" style="margin-top: 20px;"></div>
+
+
+
 
                         <div class="text-center">
                             <button type="submit" class="btn btn-success">Save</button>
@@ -137,38 +234,30 @@ Create Product
 </style>
 
 <script>
-function previewImage() {
-    var preview = document.getElementById('imagePreview');
-    var file = document.getElementById('ProductLogo').files[0];
-    var reader = new FileReader();
+function displaySelectedImage(event, elementId) {
+    const selectedImage = document.getElementById(elementId);
+    const fileInput = event.target;
 
-    reader.onloadend = function() {
-        var img = document.createElement('img');
-        img.src = reader.result;
-        img.style.maxWidth = '150px'; // Adjust the max width as needed
+    if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
 
-        var removeBtn = document.createElement('span');
-        removeBtn.innerHTML = '<i class="fas fa-times-circle"></i>';
-        removeBtn.onclick = function() {
-            preview.innerHTML = ''; // Remove the image
-            document.getElementById('ProductLogo').value = ''; // Clear the file input
+        reader.onload = function(e) {
+            selectedImage.src = e.target.result;
         };
 
-        var container = document.createElement('div');
-        container.style.position = 'relative';
-        container.style.display = 'inline-block';
-
-        container.appendChild(img);
-        container.appendChild(removeBtn);
-        preview.innerHTML = '';
-        preview.appendChild(container);
+        reader.readAsDataURL(fileInput.files[0]);
     }
+}
 
-    if (file) {
-        reader.readAsDataURL(file);
-    } else {
-        preview.innerHTML = 'No image selected';
-    }
+function removeImage(imageId, inputId) {
+    const imageElement = document.getElementById(imageId);
+    const inputElement = document.getElementById(inputId);
+
+    // Reset the image to the placeholder
+    imageElement.src = "img/placeholder.jpg";
+
+    // Clear the file input
+    inputElement.value = "";
 }
 </script>
 

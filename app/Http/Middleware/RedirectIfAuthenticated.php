@@ -16,7 +16,7 @@ class RedirectIfAuthenticated
                 if (Auth::user()->role === 'Admin') {
                     return redirect()->route('user.index'); // Change this route name to match UserIndex
                 } else {
-                    return redirect()->route('client.dashboard'); // Change this to your Client dashboard route
+                    return redirect()->route('app.cashew_Layout'); // Change this to your Client dashboard route
                 }
             }
         }

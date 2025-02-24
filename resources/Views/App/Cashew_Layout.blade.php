@@ -1,4 +1,4 @@
-@extends('App.Main_Cashew_Layout')
+@extends('app.main_cashew_layout')
 @section('Tittle')
 Product List
 @endsection
@@ -100,9 +100,6 @@ Product List
                             <i class="fa fa-shopping-cart me-2 text-primary"></i> Add to Cart
                         </a>
                         @endif
-
-
-
                     </div>
                 </div>
             </div>
@@ -129,9 +126,6 @@ Product List
                 /* Rotates the icon */
             }
             </style>
-
-
-            <!-- Modal -->
             <!-- Product Modal -->
             <div class="modal fade" id="productModal{{ $item->id }}" tabindex="-1"
                 aria-labelledby="productModalLabel{{ $item->id }}" aria-hidden="true">
@@ -178,9 +172,6 @@ Product List
                                     mainImage.alt = thumbnail.alt;
                                 }
                                 </script>
-
-
-                                <!-- Right Column: Product Details (Responsive) -->
                                 <div class="col-md-7 col-sm-12">
                                     <!-- Product Rating -->
                                     <div class="d-flex align-items-center mb-2">
@@ -231,7 +222,7 @@ Product List
                                     <!-- Action Buttons (Responsive) -->
 
                                     <div class="d-flex justify-content-between align-items-end mt-auto py-5">
-                                        <a href="{{ route('OrderDetails.OrderDetails', ['productId' => $item->id]) }}"
+                                        <a href="{{ route('orderdetails.orderdetails', ['productId' => $item->id]) }}"
                                             class="btn btn-primary px-2">
                                             <i class="fa fa-shopping-bag me-2"></i> Buy Now
                                         </a>
@@ -255,8 +246,6 @@ Product List
 
     </div>
 </div>
-<!-- Bestsaler Product End -->
-<!-- Featurs Section Start -->
 <div class="container-fluid featurs ">
     <div class="container py-5">
         <div class="row g-4">
@@ -307,8 +296,6 @@ Product List
         </div>
     </div>
 </div>
-<!-- Featurs Section End -->
-<!-- Footer Start -->
 <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
     <div class="container py-5">
         <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">
@@ -351,8 +338,6 @@ Product List
                     <a href="" class="btn border-secondary py-2 px-4 rounded-pill text-primary">Read More</a>
                 </div>
             </div>
-
-
             <div class="col-lg-3 col-md-6">
                 <div class="footer-item">
                     <h4 class="text-light mb-3">Contact</h4>
@@ -367,26 +352,18 @@ Product List
         </div>
     </div>
 </div>
-
 <script>
-// Fetch cart details when the page loads
 document.addEventListener("DOMContentLoaded", function() {
     fetchCartDetails(); // Fetch cart details after the page loads
 });
-
-// Event listener for adding products to the cart
 document.querySelectorAll(".add-to-cart").forEach((button) => {
     button.addEventListener("click", function() {
         const productId = this.dataset.id;
         const productName = this.dataset.name;
         const productPrice = this.dataset.price;
         const productImage = this.dataset.image.split('/').pop(); // Extract just the filename
-
-        // Disable the Add to Cart button and change its text
         this.classList.add("disabled");
         this.innerHTML = '<i class="fa fa-check me-2 text-success"></i> Added to Cart';
-
-        // Send the data to the backend
         fetch("/cart/add", {
                 method: "POST",
                 headers: {
@@ -418,12 +395,11 @@ document.querySelectorAll(".add-to-cart").forEach((button) => {
                 console.error("Error:", error);
                 this.classList.remove("disabled");
                 this.innerHTML =
-                '<i class="fa fa-shopping-cart me-2 text-primary"></i> Add to Cart';
+                    '<i class="fa fa-shopping-cart me-2 text-primary"></i> Add to Cart';
             });
     });
 });
 
-// Function to open the cart sidebar automatically
 function openCartSidebar() {
     const cartSidebar = document.getElementById('cart-sidebar');
     const cartBackdrop = document.getElementById('cart-backdrop');
@@ -431,24 +407,20 @@ function openCartSidebar() {
     cartBackdrop.style.display = 'block';
 }
 
-// Function to fetch and display cart details
 function fetchCartDetails() {
     const cartItems = document.getElementById("cart-items");
-    const cartTotal = document.getElementById("cart-total");
 
     // Clear the current cart items before fetching new data
     cartItems.innerHTML = '';
-
-    // Fetch updated cart details
     fetch('/get-cart-details')
         .then(response => response.json())
         .then(data => {
             if (data.success && data.cartItems.length > 0) {
                 data.cartItems.forEach(item => {
                     const productRow = document.createElement("div");
-
                     productRow.className =
                         `d-flex justify-content-between align-items-center mb-3 product-row product-${item.product_id}`;
+                    productRow.setAttribute("data-id", item.product_id); // ✅ Ensure data-id is added
 
                     productRow.innerHTML = `
                         <div class="product-info d-flex align-items-center">
@@ -467,15 +439,40 @@ function fetchCartDetails() {
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     `;
-
-                    // Add the product row to the cart items
                     cartItems.appendChild(productRow);
 
-                    // ✅ Add listeners for quantity and remove button
+                    // ✅ Re-attach listeners for each product row
                     addProductRowListeners(productRow, item.product_id);
                 });
 
-                updateTotal(); // Update the total after loading the cart
+                // ✅ Checkout form - only add once
+                if (!document.getElementById("cart-footer")) {
+                    const cartFooter = document.createElement("div");
+                    cartFooter.id = "cart-footer";
+                    cartFooter.className = "mt-4";
+                    cartFooter.innerHTML = `
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5>Total:</h5>
+                            <h5 id="cart-total" class="text-success">₹0.00</h5>
+                        </div>
+                        <form action="{{ route('orderdetails.multiorderdetails') }}" method="POST" id="checkout-form">
+                            @csrf
+                            <input type="hidden" name="productIds" id="productIds" value="">
+                            <button type="submit" class="btn btn-primary w-100">Proceed to Checkout</button>
+                        </form>
+                    `;
+                    cartItems.appendChild(cartFooter);
+
+                    // ✅ Update hidden input for product IDs before checkout
+                    document.getElementById("checkout-form").addEventListener("submit", function() {
+                        const productIds = Array.from(document.querySelectorAll(".product-row")).map(row =>
+                            row.getAttribute("data-id"));
+                        document.getElementById("productIds").value = JSON.stringify(productIds);
+                    });
+                }
+
+                updateTotal(); // ✅ Update the total after loading the cart
             } else {
                 cartItems.innerHTML =
                     '<p class="empty-cart-message text-center text-muted">Your cart is empty.</p>';
@@ -484,7 +481,21 @@ function fetchCartDetails() {
         .catch(error => console.error('Error fetching cart details:', error));
 }
 
-// Function to update the total amount in the cart
+
+
+document.getElementById("checkout-form").addEventListener("submit", function(event) {
+    const productIds = Array.from(document.querySelectorAll(".product-row")).map(row => row.getAttribute(
+        "data-id"));
+    if (productIds.length === 0) {
+        event.preventDefault(); // Prevent form submission if no products are selected
+        alert("Your cart is empty.");
+    } else {
+        document.getElementById("productIds").value = JSON.stringify(productIds);
+    }
+});
+
+
+
 function updateTotal() {
     let total = 0;
     const cartItems = document.getElementById("cart-items");
@@ -500,7 +511,6 @@ function updateTotal() {
     cartTotal.textContent = `₹${total.toFixed(2)}`;
 }
 
-// ✅ Function to update the "Add to Cart" button after item removal
 function updateAddToCartButton(productId) {
     const addToCartButton = document.querySelector(`.add-to-cart[data-id="${productId}"]`);
     if (addToCartButton) {
@@ -510,33 +520,22 @@ function updateAddToCartButton(productId) {
     }
 }
 
-// Function to add event listeners for quantity change and item removal
 function addProductRowListeners(row, productId) {
     const quantityInput = row.querySelector(".product-quantity");
-
-    // Increase quantity
     row.querySelector(".quantity-increase").addEventListener("click", function() {
         quantityInput.value = parseInt(quantityInput.value) + 1;
         updateTotal();
     });
-
-    // Decrease quantity
     row.querySelector(".quantity-decrease").addEventListener("click", function() {
         if (parseInt(quantityInput.value) > 1) {
             quantityInput.value = parseInt(quantityInput.value) - 1;
             updateTotal();
         }
     });
-
-    // ✅ Modify the remove button event listener
     row.querySelector(".remove-item").addEventListener("click", function() {
         const removeButton = this;
-
-        // Change button style to indicate the item is being removed
         removeButton.disabled = true;
         removeButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Removing...';
-
-        // Send the DELETE request to remove the item from the cart
         fetch(`/cart/remove/${productId}`, {
                 method: "DELETE",
                 headers: {
@@ -547,11 +546,8 @@ function addProductRowListeners(row, productId) {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // ✅ Remove the item from the cart in the UI
                     row.remove();
                     updateTotal();
-
-                    // ✅ Enable the "Add to Cart" button after removal
                     updateAddToCartButton(productId);
                 } else {
                     alert("Error removing item from cart.");
@@ -567,6 +563,4 @@ function addProductRowListeners(row, productId) {
     });
 }
 </script>
-
-
 @endsection

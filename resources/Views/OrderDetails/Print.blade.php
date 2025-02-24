@@ -15,15 +15,15 @@ Order List
                         <h4 class="float-end font-size-15">Invoice {{ $order->id }} <span
                                 class="badge bg-success font-size-12 ms-2">Paid</span></h4>
                         <div class="mb-4">
-                            <h2 class="mb-1 text-muted">Amirthamhub.com</h2>
+                            <h2 class="mb-1 text-muted">Munishvam.com</h2>
                         </div>
                         <div class="text-muted">
-                            <p class="mb-1">41, west street, Landmark: vallalar kovil</br>
-                                puliyur, ambalavanapettai (Post),</br> kurinjipadi (T.k),
+                            <p class="mb-1">47, South street,puliyur pethanankuppam, </br>
+                                ambalavanapettai (Post), Landmark: vallalar kovil</br> kurinjipadi (T.k),
                                 Cuddalore - 607301
 
                             </p>
-                            <p class="mb-1"><i class="uil uil-envelope-alt me-1"></i> Amirthamhub@987.com</p>
+                            <p class="mb-1"><i class="uil uil-envelope-alt me-1"></i> Munishvam@987.com</p>
                             <p><i class="uil uil-phone me-1"></i> +91-8754290365</p>
                         </div>
 

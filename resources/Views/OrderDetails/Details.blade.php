@@ -1,5 +1,5 @@
 <!-- resources/views/admin/orders/details.blade.php -->
-@extends('adminLTE.AdminLTE_Layout')
+@extends('adminLTE.adminLTE_layout')
 
 @section('Tittle')
 Order #{{ $order->id }} Details
@@ -34,10 +34,10 @@ Order #{{ $order->id }} Details
                             @endif
                         </div>
                     </div>
-                    <a href="{{ route('OrderDetails.acceptOrder', $order->id) }}" class="btn btn-primary mt-3"
+                    <a href="{{ route('orderdetails.acceptorder', $order->id) }}" class="btn btn-primary mt-3"
                         onclick="return confirm('Are you sure you want to accept this order and move it to production?')">Accept
                         Order</a>
-                    <a href="{{ route('OrderDetails.OrderIndex') }}" class="btn btn-secondary mt-3">Back to Order
+                    <a href="{{ route('orderdetails.orderindex') }}" class="btn btn-secondary mt-3">Back to Order
                         List</a>
                 </div>
             </div>

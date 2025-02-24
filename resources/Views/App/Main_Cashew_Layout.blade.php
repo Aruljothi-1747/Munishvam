@@ -62,7 +62,7 @@
                 <p>Guest</p>
                 @endauth
                 @auth
-                <a href="{{ route('App.AccountDetails', ['id' => Auth::user()->id]) }}" class="dropdown-item"
+                <a href="{{ route('app.accountdetails', ['id' => Auth::user()->id]) }}" class="dropdown-item"
                     style="padding: 10px;">
                     <i class="fas fa-shopping-cart"></i> Order Details
                 </a>
@@ -73,7 +73,7 @@
                 @endauth
 
                 @auth
-                <a href="{{ route('App.AccountDetails', ['id' => Auth::user()->id]) }}" class="dropdown-item"
+                <a href="{{ route('app.accountdetails', ['id' => Auth::user()->id]) }}" class="dropdown-item"
                     style="padding:10px;">
                     <i class="fas fa-user"></i> My Account
                 </a>
@@ -216,14 +216,14 @@
                     <!-- Placeholder for dynamic items -->
                     <p class="empty-cart-message text-center text-muted">Your cart is empty.</p>
                 </div>
-                <div id="cart-footer" class="mt-4">
+                <!-- <div id="cart-footer" class="mt-4">
                     <hr>
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5>Total:</h5>
                         <h5 id="cart-total" class="text-success">₹0.00</h5>
                     </div>
                     <button class="btn btn-primary w-100">Proceed to Checkout</button>
-                </div>
+                </div> -->
             </div>
 
             <div id="cart-backdrop" class="backdrop" style="z-index: 1040; display: none;"></div>
@@ -233,7 +233,7 @@
             <div class="collapse navbar-collapse " id="navbarCollapse">
                 <div class="navbar-nav mx-auto">
 
-                    <a href="{{ route('app.cashew_Layout') }}" class="nav-item nav-link active">Home</a>
+                    <a href="{{ route('app.cashew_layout') }}" class="nav-item nav-link active">Home</a>
 
                 </div>
                 <div class="d-flex m-3 me-0">

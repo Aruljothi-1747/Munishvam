@@ -26,7 +26,7 @@ class OrderDetailsController extends Controller
         $gstAmount = ($productPrice + $shippingCharge) * $gstPercentage / 100;
         $totalAmount = $productPrice + $shippingCharge + $gstAmount;
     
-        return view('OrderDetails.print', compact('order','addressParts','gstPercentage','gstAmount','totalAmount'));
+        return view('orderdetails.print', compact('order','addressParts','gstPercentage','gstAmount','totalAmount'));
     }
     
 
@@ -40,7 +40,7 @@ class OrderDetailsController extends Controller
         $orders = Order::where('user_id', Auth::id())->with(['product', 'customer'])->get();
     }
 
-    return view('OrderDetails.OrderIndex', compact('orders'));
+    return view('orderdetails.orderindex', compact('orders'));
 }
 public function acceptOrder($orderId)
 {
@@ -53,17 +53,17 @@ public function acceptOrder($orderId)
         $order->status = 'In Production';
         $order->save();
         
-        return redirect()->route('OrderDetails.OrderIndex')->with('success', 'Order is now in production.');
+        return redirect()->route('orderdetails.orderindex')->with('success', 'Order is now in production.');
     }
 
     // If the order is already in production, do not change anything
-    return redirect()->route('OrderDetails.OrderIndex')->with('error', 'This order is already in production.');
+    return redirect()->route('orderdetails.orderindex')->with('error', 'This order is already in production.');
 }
 public function showOrderDetails($id)
 {
     $order = Order::find($id);
     if ($order) {
-        return view('OrderDetails.details', compact('order'));
+        return view('orderdetails.details', compact('order'));
     } else {
         return redirect()->route('orders.index')->with('error', 'Order not found.');
     }
@@ -83,7 +83,25 @@ public function showOrderDetails($id)
     // Splitting address parts for display if it exists, otherwise empty array  
     $addressParts = isset($customer->Address) ? explode(', ', $customer->Address) : [];
 
-    return view('OrderDetails.OrderDetails', compact('user', 'customer', 'addressParts', 'product'));
+    return view('orderdetails.orderdetails', compact('user', 'customer', 'addressParts', 'product'));
+}
+public function orderDetails(Request $request)
+{
+    $user = Auth::user();
+
+    $productIds = json_decode($request->input('productIds'), true) ?? [];
+
+    if (empty($productIds)) {
+        return redirect()->back()->with('error', 'No products selected.');
+    }
+
+    $products = Product::whereIn('id', $productIds)->get();
+
+    // Assuming you get the customer's data here
+    $customer = Customers::where('UserId', $user->id)->firstOrFail();
+    $addressParts = explode(',', $customer->Address ?? '');
+
+    return view('orderdetails.multiorderdetails', compact('products', 'customer', 'addressParts'));
 }
 
 
@@ -132,7 +150,7 @@ public function placeOrder(Request $request)
 
         $order->save();
 
-        return redirect()->route('OrderDetails.confirmation')->with('success', 'Order placed successfully!');
+        return redirect()->route('orderdetails.confirmation')->with('success', 'Order placed successfully!');
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
         return back()->withErrors(['error' => 'Product not found.']);
     } catch (\Illuminate\Validation\ValidationException $e) {

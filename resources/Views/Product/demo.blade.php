@@ -290,7 +290,7 @@
                             <i class="fas fa-shopping-cart"></i> Order Details
                         </a>
                         @auth
-                        <a href="{{ route('App.AccountDetails', ['id' => Auth::user()->id]) }}" class="dropdown-item"
+                        <a href="{{ route('app.accountdetails', ['id' => Auth::user()->id]) }}" class="dropdown-item"
                             style="padding:10px;">
                             <i class="fas fa-user"></i> My Account
                         </a>

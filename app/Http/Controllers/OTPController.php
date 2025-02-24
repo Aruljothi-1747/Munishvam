@@ -31,6 +31,7 @@ class OTPController extends Controller
             "variables_values" => "$otp",
             "route" => "otp",
             "numbers" => "$phonenumber",
+            
         ];
 
         $curl = curl_init();
@@ -122,8 +123,8 @@ if (isset($data['return']) && $data['return'] == true) {
     
             // Redirect based on role
             return ($user->role === 'admin')
-                ? redirect('/ProductIndex')->with('success', 'Welcome Admin!')
-                : redirect('/ProductIndex')->with('success', 'Welcome Client!');
+                ? redirect('/productindex')->with('success', 'Welcome Admin!')
+                : redirect('/productindex')->with('success', 'Welcome Client!');
                 Session::forget(['otp', 'phonenumber']);
         } else {
             return back()->with('error', 'Invalid OTP. Please try again.');

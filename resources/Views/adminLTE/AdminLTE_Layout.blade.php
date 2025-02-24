@@ -114,7 +114,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('OrderDetails.OrderIndex') }}" class="nav-link">
+                            <a href="{{ route('orderdetails.orderindex') }}" class="nav-link">
                                 <i class="fa-brands fa-uncharted"></i>
                                 <p>
                                     Orders

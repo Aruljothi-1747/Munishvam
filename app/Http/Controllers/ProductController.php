@@ -10,11 +10,11 @@ class ProductController extends Controller
         public function index()
         {
             $data = product::all();
-            return view("/Product/Index",compact('data'));
+            return view("/product/index",compact('data'));
         }
         public function create()
         {
-            return view("/Product/Create");
+            return view("/product/create");
         }
         public function store(Request $request)
         {
@@ -72,7 +72,7 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = product::findOrFail($id);
-        return view('Product.Show', compact('product'));
+        return view('product.phow', compact('product'));
     }
     public function edit($id)
     {

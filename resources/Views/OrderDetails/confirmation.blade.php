@@ -61,7 +61,7 @@
                 @else
                 <p class="card-text">Your order has been successfully placed.</p>
                 @endif
-                <a href="{{ route('OrderDetails.OrderDetails', ['userId' => Auth::id(), 'productId' => $product->id ?? 1]) }}"
+                <a href="{{ route('orderdetails.orderdetails', ['userId' => Auth::id(), 'productId' => $product->id ?? 1]) }}"
                     class="btn btn-home mt-3">View Orders</a>
                 <a href="/" class="btn btn-secondary mt-3">Go to Home</a>
             </div>

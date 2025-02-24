@@ -16,7 +16,7 @@ class Cashew_LayoutController extends Controller
         $data = Product::all();
         $cartItems = Cart::where('user_id', auth()->id())->get();
 
-        return view('App.Cashew_Layout', compact('data','cartItems'));
+        return view('app.cashew_Layout', compact('data','cartItems'));
     }
 
             public function show($id)
@@ -29,7 +29,7 @@ class Cashew_LayoutController extends Controller
                 // Split the address if it exists; otherwise, use an empty array.
                 $addressParts = isset($customer->Address) ? explode(', ', $customer->Address) : [];
 
-                return view('App.AccountDetails', compact('user', 'customer', 'addressParts','orders'));
+                return view('app.accountdetails', compact('user', 'customer', 'addressParts','orders'));
             }
     // Store a new customer
    public function Customerstore(Request $request, $id)

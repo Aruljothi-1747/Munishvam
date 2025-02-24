@@ -40,7 +40,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('app.cashew_Layout') }}" class="nav-link logout-link">
+                <a href="{{ route('app.cashew_layout') }}" class="nav-link logout-link">
                     Back to<i class="fas fa-home-alt"></i>
                 </a>
             </li>
@@ -240,7 +240,7 @@
             </div>
             <!-- Profile Tab -->
             <div class="tab-pane fade " id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                <form action="{{ route('App.AccountDetailsUpdate', $customer->id) }}" method="POST"
+                <form action="{{ route('app.accountdetailsupdate', $customer->id) }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
 

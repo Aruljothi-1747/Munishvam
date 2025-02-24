@@ -9,11 +9,11 @@ class CustomerController extends Controller
     public function index()
     {
         $data = customer::all();
-        return view("App/Customer/Index")->with("data", $data);
+        return view("app/customer/index")->with("data", $data);
     }
     public function create()
     {
-        return view("App/Customer/Create");
+        return view("app/customer/create");
     }
 public function store(Request $request)
 {
@@ -70,7 +70,7 @@ public function store(Request $request)
 
     $customer->save();
 
-    return redirect('/CustomerIndex')->with('success', $customer->Name . ' - Added Successfully');
+    return redirect('/customerindex')->with('success', $customer->Name . ' - Added Successfully');
 }
 
     public function edit($id)

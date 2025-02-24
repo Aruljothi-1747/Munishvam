@@ -1,4 +1,4 @@
-@extends('adminLTE.AdminLTE_Layout')
+@extends('adminLTE.adminLTE_layout')
 @section('Tittle')
 Users
 @endsection

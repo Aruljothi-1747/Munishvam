@@ -1,4 +1,4 @@
-@extends('App.Layout')
+@extends('adminLTE.adminLTE_layout')
 @section('Tittle')
 Customer List
 @endsection

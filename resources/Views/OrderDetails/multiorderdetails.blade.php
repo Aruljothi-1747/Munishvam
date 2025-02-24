@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
     <style>
     body {
         background-color: #f8f9fa;
@@ -81,13 +82,10 @@
 </head>
 
 <body>
-
     <div class="container my-5">
         <h2 class="mb-4 text-center">Order Details List</h2>
-
         <div class="card order-card">
             <div class="order-header">
-                <span class="order-title">Order #{{ $product->id }}</span>
                 <span><i class="fas fa-calendar-alt"></i> Date: {{ now()->format('d-M-Y') }}</span>
             </div>
 
@@ -97,26 +95,16 @@
                         <span class="info-title"
                             style="font-size: 1.5rem; font-weight: bold; color: #4CAF50;">Shipping-Address</span>
                         <div class="info-text">
-                            <strong>Address:</strong>
-                            <div class="address-details">
-                                <div class="info-text">
-                                    <strong>Name:</strong> {{ $customer->name ?? 'Not Available' }}
-                                </div>
-                                <div class="info-text">
-                                    <strong>Contact:</strong> {{ $customer->Phonenumber ?? 'Not Available' }}
-                                </div>
-                                <p>
-                                    {{ $addressParts[1] ?? '' }}, {{ $addressParts[3] ?? '' }},
-                                    {{ $addressParts[2] ?? '' }},
-                                    {{ $addressParts[4] ?? '' }} (POST), {{ $addressParts[5] ?? '' }} (T.K),
-                                    Landmark: {{ $addressParts[0] ?? '' }},
-                                    {{ $customer->District ?? 'Not Available' }} -
-                                    {{ $customer->Pincode ?? 'Not Available' }}
-                                </p>
-                            </div>
+                            <strong>Name:</strong> {{ $customer->name ?? 'Not Available' }}<br>
+                            <strong>Contact:</strong> {{ $customer->Phonenumber ?? 'Not Available' }}<br>
+                            <p>{{ $addressParts[1] ?? '' }}, {{ $addressParts[3] ?? '' }},
+                                {{ $addressParts[2] ?? '' }}, {{ $addressParts[4] ?? '' }} (POST),
+                                {{ $addressParts[5] ?? '' }} (T.K), Landmark: {{ $addressParts[0] ?? '' }},
+                                {{ $customer->District ?? 'Not Available' }} -
+                                {{ $customer->Pincode ?? 'Not Available' }}
+                            </p>
                         </div>
                     </div>
-
                     <div class="col-md-6 text-right">
                         <button class="badge badge-success" data-toggle="modal" data-target="#updateAddressModal"
                             style="font-size: 1.0rem; padding: 10px 20px; border-radius: 5px; background-color:rgb(31, 95, 191); color: white; border: none;">
@@ -124,83 +112,189 @@
                         </button>
                     </div>
                 </div>
-            </div>
-            <!-- Product and Price Details -->
-
-
-            <div class="section">
+                @foreach($products as $product)
                 <div class="section-title">Product Details</div>
                 <div class="product-section">
                     <img src="{{ asset('ProductLogos/' . $product->ProductLogo) }}" alt="Product Image"
                         class="product-image">
                     <table class="price-section">
-                        <tr style="border-bottom: 1px solid #ddd;">
+                        <tr>
                             <th>Product</th>
                             <td>{{ $product->ProductName }}</td>
                         </tr>
-                        <tr style="border-bottom: 1px solid #ddd;">
+                        <tr>
                             <th>Price</th>
                             <td>₹{{ number_format($product->ProductPrice, 2) }}</td>
                         </tr>
-                        <tr style="border-bottom: 1px solid #ddd;">
+                        <tr>
                             <th>Quantity</th>
                             <td>{{ $product->Quantity ?? 1 }}</td>
                         </tr>
                         <tr>
                             <th>Total Price</th>
-
-                            <td style="font-size: 20px;"> <span
-                                    class="badge badge-success ">₹{{ number_format($product->ProductPrice * ($product->Quantity ?? 1), 2) }}</span>
-                            </td>
+                            <td class="badge badge-success">
+                                ₹{{ number_format($product->ProductPrice * ($product->Quantity ?? 1), 2) }}</td>
                         </tr>
                     </table>
                 </div>
-                <div class="section-title">Price Details</div>
-                <table class="price-section">
-                    <tr style="border-bottom: 2px solid #ddd;">
-                        <th>Subtotal</th>
-                        <td>₹{{ number_format($product->ProductPrice * ($product->Quantity ?? 1), 2) }}</td>
-                    </tr>
-                    <tr style="border-bottom: 2px solid #ddd;">
-                        <th>Tax (12%)</th>
-                        <td>₹{{ number_format($product->ProductPrice * ($product->Quantity ?? 1) * 0.12, 2) }}</td>
-                    </tr>
-                    <tr style="border-bottom: 2px solid #ddd;">
-                        <th>Shipping Fee</th>
-                        <td>₹0.00</td>
-                    </tr>
-                    <tr style="border-bottom: 2px solid #ddd;">
-                        <th class="total">Total</th>
+                @endforeach
 
-                        <td class="total" style="font-size: 20px;">
-                            <span class="badge badge-success">
-                                ₹{{ number_format($product->ProductPrice * ($product->Quantity ?? 1) * 1.05, 2) }}</span>
-                        </td>
-                    </tr>
-                </table>
                 <div class="section text-center">
                     <form action="{{ route('placeorder') }}" method="POST">
                         @csrf
-                        <input type="hidden" name="order_date" value="{{ now()->format('Y-m-d') }}">
-                        <input type="hidden" name="Name" value="{{ $customer->Name ?? 'Not Available' }}">
-                        <input type="hidden" name="Phonenumber" value="{{ $customer->Phonenumber ?? '' }}">
-                        <input type="hidden" name="landmark" value="{{ $addressParts[0] ?? '' }}">
-                        <input type="hidden" name="DoorNo" value="{{ $addressParts[1] ?? '' }}">
-                        <input type="hidden" name="Street" value="{{ $addressParts[2] ?? '' }}">
-                        <input type="hidden" name="Village_Town" value="{{ $addressParts[3] ?? '' }}">
-                        <input type="hidden" name="Post" value="{{ $addressParts[4] ?? '' }}">
-                        <input type="hidden" name="Taluka" value="{{ $addressParts[5] ?? '' }}">
-                        <input type="hidden" name="District" value="{{ $customer->District ?? '' }}">
-                        <input type="hidden" name="Pincode" value="{{ $customer->Pincode ?? '' }}">
-                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                        <input type="hidden" name="quantity" value="{{ $product->Quantity ?? 1 }}">
+                        <input type="hidden" name="product_id[]" value="{{ $product->id }}">
+                        <input type="hidden" name="quantity[]" value="{{ $product->Quantity ?? 1 }}">
                         <button type="submit" class="order-btn">Proceed to Order</button>
                     </form>
                 </div>
             </div>
         </div>
+
     </div>
-    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <div class="modal fade" id="updateAddressModal" tabindex="-1" aria-labelledby="updateAddressModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: rgb(103, 157, 6);" id="updateAddressModalLabel">Edit Address
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('app.accountdetailsupdate', $customer->id) }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+
+                        <div class="form-group">
+                            <label for="name" style="color:black;">Full Name</label>
+                            <input type="text" placeholder="{{ $customer->name}}" class="form-control" id="name"
+                                name="Name" value="{{  $customer->name }}" required>
+                            @error('Name')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <input type="hidden" name="UserId" value="{{ Auth::user()->id }}">
+                        <input type="hidden" name="id" value="{{ $customer->id }}">
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="phone" style="color:black;">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" name="Phonenumber"
+                                        value="{{ $customer->Phonenumber }}">
+                                    @error('Phonenumber')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Pincode" style="color:black;">Pincode</label>
+                            <input type="text" class="form-control" name="Pincode" id="Pincode"
+                                oninput="debouncedFetchLocationData()" maxlength="6" value="{{ $customer->Pincode}}">
+                            @error('Pincode')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="District">District</label>
+                                    <input type="text" class="form-control" id="District" name="District"
+                                        value="{{ $customer->District}}" placeholder="District">
+                                    @error('District')
+                                    <span class="text-danger">{{ $message }} </span>
+                                    @enderror
+                                </div>
+                                <div class="col">
+                                    <label for="State">State</label>
+                                    <input type="text" class="form-control" id="State" name="State" placeholder="State"
+                                        value="{{ $customer->State}}">
+                                    @error('State')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="DoorNo">Door No</label>
+                                    <input type="text" class="form-control" id="DoorNo" name="DoorNo"
+                                        value="{{ $addressParts[1] ?? '' }}" placeholder="Enter Door No" required>
+                                    @error('DoorNo')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col">
+                                    <label for="Village/Town">Village/Town</label>
+                                    <input type="text" class="form-control" id="Village/Town" name="Village_Town"
+                                        value="{{ $addressParts[3] ?? '' }}" placeholder="Enter Village/Town" required>
+                                    @error('Village_Town')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="landmark">Landmark</label>
+                                    <input type="text" class="form-control" id="landmark" name="landmark"
+                                        value="{{ $addressParts[0] ?? '' }}" placeholder="Enter landmark" required>
+                                    @error('landmark')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col">
+                                    <label for="Street">Street</label>
+                                    <input type="text" class="form-control" id="Street" name="Street"
+                                        value="{{ $addressParts[2] ?? '' }} Street" placeholder="Enter Street" required>
+                                    @error('Street')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="Post">Post</label>
+                                    <input type="text" class="form-control" id="Post" name="Post"
+                                        value="{{ $addressParts[4] ?? '' }}" placeholder="Enter Post" required>
+                                    @error('Post')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col">
+                                    <label for="Taluka">Taluka</label>
+                                    <input type="text" class="form-control" id="Taluka" name="Taluka"
+                                        value="{{ $addressParts[5] ?? '' }}" placeholder="Enter Taluka" required>
+                                    @error('Taluka')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block"
+                            style="background-color: rgb(103, 157, 6);">Update
+                            Address</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
     <style>
     .amazon-style-container {
@@ -308,143 +402,7 @@
         background-color: #e68a00;
     }
     </style>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <div class="modal fade" id="updateAddressModal" tabindex="-1" aria-labelledby="updateAddressModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="color: rgb(103, 157, 6);" id="updateAddressModalLabel">Edit Address
-                    </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('app.accountdetailsupdate', $customer->id) }}" method="POST"
-                        enctype="multipart/form-data">
-                        @csrf
-                        <div class="form-group">
-                            <label for="name" style="color:black;">Full Name</label>
-                            <input type="text" class="form-control" id="name" name="Name" value="{{  $customer->name }}"
-                                required>
-                            @error('Name')
-                            <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <input type="hidden" name="UserId" value="{{ Auth::user()->id }}">
-                        <input type="hidden" name="id" value="{{ $customer->id }}">
 
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col">
-                                    <label for="phone" style="color:black;">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" name="Phonenumber"
-                                        value="{{ $customer->Phonenumber }}">
-                                    @error('Phonenumber')
-                                    <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="Pincode" style="color:black;">Pincode</label>
-                            <input type="text" class="form-control" name="Pincode" id="Pincode"
-                                oninput="debouncedFetchLocationData()" maxlength="6" value="{{ $customer->Pincode}}">
-                            @error('Pincode')
-                            <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col">
-                                    <label for="District">District</label>
-                                    <input type="text" class="form-control" id="District" name="District"
-                                        value="{{ $customer->District}}" placeholder="District">
-                                    @error('District')
-                                    <span class="text-danger">{{ $message }} </span>
-                                    @enderror
-                                </div>
-                                <div class="col">
-                                    <label for="State">State</label>
-                                    <input type="text" class="form-control" id="State" name="State" placeholder="State"
-                                        value="{{ $customer->State}}">
-                                    @error('State')
-                                    <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col">
-                                    <label for="DoorNo">Door No</label>
-                                    <input type="text" class="form-control" id="DoorNo" name="DoorNo"
-                                        value="{{ $addressParts[1] ?? '' }}" placeholder="Enter Door No" required>
-                                    @error('DoorNo')
-                                    <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="col">
-                                    <label for="Village/Town">Village/Town</label>
-                                    <input type="text" class="form-control" id="Village/Town" name="Village_Town"
-                                        value="{{ $addressParts[3] ?? '' }}" placeholder="Enter Village/Town" required>
-                                    @error('Village_Town')
-                                    <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col">
-                                    <label for="landmark">Landmark</label>
-                                    <input type="text" class="form-control" id="landmark" name="landmark"
-                                        value="{{ $addressParts[0] ?? '' }}" placeholder="Enter landmark" required>
-                                    @error('landmark')
-                                    <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="col">
-                                    <label for="Street">Street</label>
-                                    <input type="text" class="form-control" id="Street" name="Street"
-                                        value="{{ $addressParts[2] ?? '' }} Street" placeholder="Enter Street" required>
-                                    @error('Street')
-                                    <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col">
-                                    <label for="Post">Post</label>
-                                    <input type="text" class="form-control" id="Post" name="Post"
-                                        value="{{ $addressParts[4] ?? '' }}" placeholder="Enter Post" required>
-                                    @error('Post')
-                                    <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="col">
-                                    <label for="Taluka">Taluka</label>
-                                    <input type="text" class="form-control" id="Taluka" name="Taluka"
-                                        value="{{ $addressParts[5] ?? '' }}" placeholder="Enter Taluka" required>
-                                    @error('Taluka')
-                                    <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block"
-                            style="background-color: rgb(103, 157, 6);">Update
-                            Address</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
     <script>
     // Cache to store pincode results locally
     const pincodeCache = {};

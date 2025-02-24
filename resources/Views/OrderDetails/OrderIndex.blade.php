@@ -1,4 +1,4 @@
-@extends('adminLTE.AdminLTE_Layout')
+@extends('adminLTE.adminLTE_layout')
 
 @section('Tittle')
 Order List
@@ -68,12 +68,12 @@ Order List
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ route('OrderDetails.show', $order->id) }}">
+                                        <a href="{{ route('orderdetails.show', $order->id) }}">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="{{ route('OrderDetails.print', $order->id) }}">
+                                        <a href="{{ route('orderdetails.print', $order->id) }}">
                                             <i class="fas fa-print"></i> Print
                                         </a>
                                     </td>
